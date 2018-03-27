@@ -1,13 +1,8 @@
 <?php
 
-	require 'vendor/autoload.php';
+	require 'dbConnection.php';
 	require_once "PHPExcel/Classes/PHPExcel.php";
-	
-	$mclient = new MongoDB\Driver\Manager("mongodb://localhost:27017");
-	echo "Connected to DB<br>";
-	
-	//$coll = $mclient->Traffic->Vehicle;
-	echo "Collection set<br>";
+	$db = getDB();
 	$keys = array(
 		"Vehicle",
 		"Latitude",
@@ -16,7 +11,9 @@
 		"Bearing",
 		"Address",
 		"Date",
-		"Time"
+		"Time",
+                "Status",
+                "Timestamp"
 	);
 	
 	$phpExcel = new PHPExcel();
@@ -27,9 +24,8 @@
 		$phpExcel->getActiveSheet()->SetCellValue(chr($i++)."1", $key);
 		echo $key, "<br>";
 	}
-	$query = new MongoDB\Driver\Query(['Date' => '2018-02-07']);
-	$result = $mclient->executeQuery('Traffic.Vehicle', $query);
 	$i = 2;
+        $result = $db -> VehicleData -> find();
 	foreach ($result as $entity){
 		$entry = json_decode(json_encode($entity), true);
 		//echo $entry['_id'], "<br>";
